@@ -4,6 +4,10 @@ A lightweight static web tool to load, inspect, merge, annotate, sort, and expor
 
 Built with plain HTML + Alpine.js, with no backend and no build step.
 
+## Demo
+
+Try it here: https://danielmroczek.github.io/pickabrick-list-merger/
+
 ## Overview
 
 This project helps combine multiple Pick-a-Brick exports (`.csv` and `.json`) into one merged list based on `elementId`.
