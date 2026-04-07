@@ -209,8 +209,6 @@ function legoMergerApp() {
               image: item.image,
               totalQuantity: item.quantity,
               perListQuantities: { [list.id]: item.quantity },
-              primarySourceListId: list.id,
-              primarySourceLabel: list.label,
               comment: this.commentsByElementId[item.elementId] || ''
             });
             continue;
@@ -246,9 +244,6 @@ function legoMergerApp() {
         } else if (this.sortBy === 'name') {
           left = (a.name || '').toLowerCase();
           right = (b.name || '').toLowerCase();
-        } else if (this.sortBy === 'sourceList') {
-          left = (a.primarySourceLabel || '').toLowerCase();
-          right = (b.primarySourceLabel || '').toLowerCase();
         } else {
           left = a.elementId;
           right = b.elementId;
@@ -285,6 +280,7 @@ function legoMergerApp() {
 
     buildPerListQuantitiesByLabel(perListQuantities) {
       return Object.entries(perListQuantities)
+        .filter(([_, qty]) => qty > 0)
         .map(([listId, qty]) => {
           const list = this.inputLists.find((entry) => entry.id === listId);
           const label = list ? list.label : listId;
@@ -372,3 +368,5 @@ function legoMergerApp() {
     }
   };
 }
+
+window.legoMergerApp = legoMergerApp;

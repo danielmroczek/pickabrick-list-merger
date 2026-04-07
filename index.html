@@ -10,8 +10,8 @@
     href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
   >
   <link rel="stylesheet" href="css/styles.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script defer src="js/app.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body x-data="legoMergerApp()">
   <main class="container">
@@ -131,11 +131,6 @@
                 </button>
               </th>
               <th>Total Qty</th>
-              <th>
-                <button type="button" class="sort-button" @click="toggleSort('sourceList')">
-                  Primary Source <span x-text="sortIndicator('sourceList')"></span>
-                </button>
-              </th>
               <th>Per List Quantities</th>
               <th>Comment</th>
             </tr>
@@ -149,8 +144,7 @@
                 <td x-text="item.name || '-' "></td>
                 <td x-text="item.elementId"></td>
                 <td x-text="item.totalQuantity"></td>
-                <td x-text="item.primarySourceLabel"></td>
-                <td class="origin" x-text="formatPerListQuantities(item.perListQuantities)"></td>
+                <td class="origin" x-text="buildPerListQuantitiesByLabel(item.perListQuantities)"></td>
                 <td>
                   <input
                     type="text"

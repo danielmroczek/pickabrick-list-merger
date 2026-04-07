@@ -28,7 +28,6 @@ For each merged item, the app:
 - Sorting in merged table by:
   - `name`
   - `elementId`
-  - primary source list
 - Export merged result to:
   - JSON (`elementId`, `quantity`, optional `name`, `image`, plus `comment` and `perListQuantities`)
   - CSV (`name,elementId,quantity,image,perListQuantities,comment`)
