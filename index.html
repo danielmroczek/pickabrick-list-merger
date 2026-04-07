@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pick-a-brick list merger</title>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+  >
+  <link rel="stylesheet" href="css/styles.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="js/app.js"></script>
+</head>
+<body x-data="legoMergerApp()">
+  <main class="container">
+    <h1>Pick-a-brick list merger</h1>
+    <p>Load CSV and JSON exports, merge by elementId, edit comments, and export combined results.</p>
+
+    <section>
+      <div class="section-head">
+        <h2>1. Load Files</h2>
+      </div>
+
+      <label for="fileInput">Select CSV/JSON files</label>
+      <input id="fileInput" type="file" multiple accept=".csv,.json" @change="handleFileSelection($event)">
+
+      <div x-show="inputLists.length > 0">
+        <h3>Loaded lists (<span x-text="inputLists.length"></span>)</h3>
+        <ul class="file-list">
+          <template x-for="list in inputLists" :key="list.id">
+            <li>
+              <strong x-text="list.label"></strong>
+              <span> - </span>
+              <span x-text="list.items.length"></span>
+              <span> items</span>
+            </li>
+          </template>
+        </ul>
+      </div>
+
+      <article class="error-box" x-show="errors.length > 0">
+        <h3>Parsing issues</h3>
+        <ul>
+          <template x-for="(error, index) in errors" :key="index">
+            <li x-text="error"></li>
+          </template>
+        </ul>
+      </article>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>2. Input Lists Preview</h2>
+      </div>
+
+      <div x-show="inputLists.length === 0">
+        <p><em>Load at least one file to preview list contents.</em></p>
+      </div>
+
+      <div x-show="inputLists.length > 0">
+        <div class="panel-switcher" role="group" aria-label="Input list switcher">
+          <template x-for="list in inputLists" :key="list.id">
+            <button
+              type="button"
+              @click="activeInputListId = list.id"
+              :class="activeInputListId === list.id ? 'contrast' : 'secondary'"
+              x-text="list.label"
+            ></button>
+          </template>
+        </div>
+
+        <div class="table-wrap" x-show="activeInputList">
+          <table>
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Element ID</th>
+                <th>Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="(item, index) in activeInputList ? activeInputList.items : []" :key="item.elementId + '-' + index">
+                <tr>
+                  <td>
+                    <img :src="item.image" :alt="item.name || item.elementId" class="thumb" loading="lazy">
+                  </td>
+                  <td x-text="item.name || '-' "></td>
+                  <td x-text="item.elementId"></td>
+                  <td x-text="item.quantity"></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>3. Merged Result</h2>
+        <div>
+          <button type="button" class="secondary" @click="exportMergedJson()" :disabled="sortedMergedItems().length === 0">Export JSON</button>
+          <button type="button" class="secondary" @click="exportMergedCsv()" :disabled="sortedMergedItems().length === 0">Export CSV</button>
+        </div>
+      </div>
+
+      <p x-show="sortedMergedItems().length > 0">
+        Total unique elements: <strong x-text="sortedMergedItems().length"></strong>
+      </p>
+
+      <div x-show="sortedMergedItems().length === 0">
+        <p><em>No merged data yet.</em></p>
+      </div>
+
+      <div class="table-wrap" x-show="sortedMergedItems().length > 0">
+        <table>
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>
+                <button type="button" class="sort-button" @click="toggleSort('name')">
+                  Name <span x-text="sortIndicator('name')"></span>
+                </button>
+              </th>
+              <th>
+                <button type="button" class="sort-button" @click="toggleSort('elementId')">
+                  Element ID <span x-text="sortIndicator('elementId')"></span>
+                </button>
+              </th>
+              <th>Total Qty</th>
+              <th>
+                <button type="button" class="sort-button" @click="toggleSort('sourceList')">
+                  Primary Source <span x-text="sortIndicator('sourceList')"></span>
+                </button>
+              </th>
+              <th>Per List Quantities</th>
+              <th>Comment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="item in sortedMergedItems()" :key="item.elementId">
+              <tr>
+                <td>
+                  <img :src="item.image" :alt="item.name || item.elementId" class="thumb" loading="lazy">
+                </td>
+                <td x-text="item.name || '-' "></td>
+                <td x-text="item.elementId"></td>
+                <td x-text="item.totalQuantity"></td>
+                <td x-text="item.primarySourceLabel"></td>
+                <td class="origin" x-text="formatPerListQuantities(item.perListQuantities)"></td>
+                <td>
+                  <input
+                    type="text"
+                    placeholder="Add comment"
+                    x-model="item.comment"
+                    @input="commentsByElementId[item.elementId] = item.comment"
+                  >
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+</body>
+</html>
