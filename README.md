@@ -43,7 +43,7 @@ For each merged item, the app:
 
 1. Clone or download this repository.
 2. Open `index.html` directly in your browser.
-3. Load one or more list files from the `samples/` folder or your own exports.
+3. Load one or more list files from your own Pick-a-brick exports.
 
 > [!TIP]
 > No install, no npm, and no server are required for basic usage.
@@ -119,12 +119,8 @@ name,elementId,quantity,image,perListQuantities,comment
 ├── index.html
 ├── css/
 │   └── styles.css
-├── js/
-│   └── app.js
-└── samples/
-    ├── list-template.csv
-    ├── list-template.json
-    └── ...
+└── js/
+    └── app.js
 ```
 
 ## How It Works
